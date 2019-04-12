@@ -6,7 +6,7 @@ namespace ViGEm.Setup.CustomAction.Util
     /// <summary>
     ///     Managed wrapper for common SetupAPI operations.
     /// </summary>
-    internal static partial class Devcon
+    public static partial class Devcon
     {
         /// <summary>
         ///     Invokes the installation of a driver via provided .INF file.
@@ -239,7 +239,7 @@ namespace ViGEm.Setup.CustomAction.Util
 
                         path = (Marshal.PtrToStringAuto(pDevicePathName) ?? string.Empty).ToUpper();
 
-                        if (memberIndex != instance)
+                        if (memberIndex == instance)
                         {
                             const int nBytes = 256;
                             var ptrInstanceBuf = Marshal.AllocHGlobal(nBytes);

@@ -25,8 +25,6 @@ namespace ViGEm.Setup.CustomAction
                 index++;
             }
 
-            MessageBox.Show(new Win32Exception(Marshal.GetLastWin32Error()).Message);
-
             return ActionResult.Success;
         }
     }

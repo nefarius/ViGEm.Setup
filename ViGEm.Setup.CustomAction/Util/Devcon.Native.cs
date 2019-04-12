@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace ViGEm.Setup.CustomAction.Util
 {
-    internal static partial class Devcon
+    public static partial class Devcon
     {
         #region Constant and Structure Definitions
 
