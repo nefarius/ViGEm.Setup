@@ -23,8 +23,17 @@ namespace ViGEm.Setup.CustomAction.Util
         {
             internal int cbSize;
             internal readonly Guid ClassGuid;
-            internal readonly int Flags;
-            internal readonly IntPtr Reserved;
+            internal readonly int DevInst;
+            private readonly IntPtr Reserved;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct SP_DEVICE_INTERFACE_DATA
+        {
+            internal int cbSize;
+            internal readonly Guid interfaceClassGuid;
+            internal readonly Int32 flags;
+            private readonly UIntPtr reserved;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -109,11 +118,11 @@ namespace ViGEm.Setup.CustomAction.Util
 
         [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
         private static extern bool SetupDiEnumDeviceInterfaces(IntPtr DeviceInfoSet, IntPtr DeviceInfoData,
-            ref Guid InterfaceClassGuid, int MemberIndex, ref SP_DEVINFO_DATA DeviceInterfaceData);
+            ref Guid InterfaceClassGuid, int MemberIndex, ref SP_DEVICE_INTERFACE_DATA DeviceInterfaceData);
 
         [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
         private static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr DeviceInfoSet,
-            ref SP_DEVINFO_DATA DeviceInterfaceData, IntPtr DeviceInterfaceDetailData,
+            ref SP_DEVICE_INTERFACE_DATA DeviceInterfaceData, IntPtr DeviceInterfaceDetailData,
             int DeviceInterfaceDetailDataSize,
             ref int RequiredSize, ref SP_DEVINFO_DATA DeviceInfoData);
 
