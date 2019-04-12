@@ -72,7 +72,25 @@ namespace ViGEm.Setup.CustomAction.Util
                     SetupDiDestroyDeviceInfoList(deviceInfoSet);
             }
 
+
             return true;
+        }
+
+        /// <summary>
+        ///     Instructs the system to re-enumerate hardware devices.
+        /// </summary>
+        /// <returns>True on success, false otherwise.</returns>
+        public static bool RefreshDevices()
+        {
+            if (CM_Locate_DevNode_Ex(
+                    out var devRoot,
+                    IntPtr.Zero,
+                    0,
+                    IntPtr.Zero
+                ) != CR_SUCCESS)
+                return false;
+
+            return CM_Reenumerate_DevNode_Ex(devRoot, 0, IntPtr.Zero) == CR_SUCCESS;
         }
     }
 }
