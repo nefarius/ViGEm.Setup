@@ -113,5 +113,61 @@ namespace ViGEm.Setup.CustomAction.Util
                 out rebootRequired
             );
         }
+
+        /// <summary>
+        ///     Removed a device node identified by class GUID, path and instance ID.
+        /// </summary>
+        /// <param name="classGuid">The device class GUID.</param>
+        /// <param name="instanceId">The instance ID.</param>
+        /// <returns>True on success, false otherwise.</returns>
+        public static bool RemoveDeviceInstance(Guid classGuid, string instanceId)
+        {
+            var deviceInfoSet = IntPtr.Zero;
+
+            try
+            {
+                var deviceInterfaceData = new SP_DEVINFO_DATA();
+
+                deviceInterfaceData.cbSize = Marshal.SizeOf(deviceInterfaceData);
+                deviceInfoSet = SetupDiGetClassDevs(
+                    ref classGuid,
+                    IntPtr.Zero,
+                    IntPtr.Zero,
+                    DIGCF_PRESENT | DIGCF_DEVICEINTERFACE
+                );
+
+                if (SetupDiOpenDeviceInfo(
+                    deviceInfoSet,
+                    instanceId,
+                    IntPtr.Zero,
+                    0,
+                    ref deviceInterfaceData
+                ))
+                {
+                    var props = new SP_REMOVEDEVICE_PARAMS {ClassInstallHeader = new SP_CLASSINSTALL_HEADER()};
+
+                    props.ClassInstallHeader.cbSize = Marshal.SizeOf(props.ClassInstallHeader);
+                    props.ClassInstallHeader.InstallFunction = DIF_REMOVE;
+
+                    props.Scope = DI_REMOVEDEVICE_GLOBAL;
+                    props.HwProfile = 0x00;
+
+                    if (SetupDiSetClassInstallParams(
+                        deviceInfoSet,
+                        ref deviceInterfaceData,
+                        ref props,
+                        Marshal.SizeOf(props)
+                    ))
+                        return SetupDiCallClassInstaller(DIF_REMOVE, deviceInfoSet, ref deviceInterfaceData);
+                }
+            }
+            finally
+            {
+                if (deviceInfoSet != IntPtr.Zero)
+                    SetupDiDestroyDeviceInfoList(deviceInfoSet);
+            }
+
+            return false;
+        }
     }
 }
