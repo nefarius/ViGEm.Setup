@@ -14,6 +14,8 @@ namespace ViGEm.Setup.CustomAction
         {
             session.Log("Begin CustomAction1");
 
+            MessageBox.Show(session["APPDIR"]);
+
             var busGuid = Guid.Parse("{96E42B22-F5E9-42F8-B043-ED0F932F014F}");
 
             var index = 0;
@@ -25,7 +27,7 @@ namespace ViGEm.Setup.CustomAction
                 index++;
             }
 
-            return ActionResult.Success;
+            return ActionResult.Failure;
         }
     }
 }
