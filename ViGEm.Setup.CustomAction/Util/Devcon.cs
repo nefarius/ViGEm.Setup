@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace ViGEm.Setup.CustomAction.Util
@@ -158,7 +159,12 @@ namespace ViGEm.Setup.CustomAction.Util
                         ref props,
                         Marshal.SizeOf(props)
                     ))
-                        return SetupDiCallClassInstaller(DIF_REMOVE, deviceInfoSet, ref deviceInterfaceData);
+                    {
+                        if (!SetupDiCallClassInstaller(DIF_REMOVE, deviceInfoSet, ref deviceInterfaceData))
+                            throw new Win32Exception(Marshal.GetLastWin32Error());
+
+                        return true;
+                    }
                 }
             }
             finally
