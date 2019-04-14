@@ -186,7 +186,9 @@ namespace ViGEm.Setup.CustomAction.Util
 
                         return true;
                     }
+                    else throw new Win32Exception(Marshal.GetLastWin32Error());
                 }
+                else throw new Win32Exception(Marshal.GetLastWin32Error());
             }
             finally
             {
@@ -194,9 +196,6 @@ namespace ViGEm.Setup.CustomAction.Util
                     SetupDiDestroyDeviceInfoList(deviceInfoSet);
                 Marshal.FreeHGlobal(installParams);
             }
-
-            rebootRequired = false;
-            return false;
         }
 
         /// <summary>
