@@ -29,14 +29,14 @@ namespace ViGEm.Setup.CustomAction.Util
         /// <returns>True on success, false otherwise.</returns>
         public static bool CreateDeviceNode(string className, Guid classGuid, string node)
         {
-            var deviceInfoSet = (IntPtr)(-1);
+            var deviceInfoSet = (IntPtr) (-1);
             var deviceInfoData = new SP_DEVINFO_DATA();
 
             try
             {
                 deviceInfoSet = SetupDiCreateDeviceInfoList(ref classGuid, IntPtr.Zero);
 
-                if (deviceInfoSet == (IntPtr)(-1)) return false;
+                if (deviceInfoSet == (IntPtr) (-1)) return false;
 
                 deviceInfoData.cbSize = Marshal.SizeOf(deviceInfoData);
 
@@ -69,7 +69,7 @@ namespace ViGEm.Setup.CustomAction.Util
             }
             finally
             {
-                if (deviceInfoSet != (IntPtr)(-1))
+                if (deviceInfoSet != (IntPtr) (-1))
                     SetupDiDestroyDeviceInfoList(deviceInfoSet);
             }
 
@@ -120,18 +120,18 @@ namespace ViGEm.Setup.CustomAction.Util
         /// </summary>
         /// <param name="classGuid">The device class GUID.</param>
         /// <param name="instanceId">The instance ID.</param>
+        /// <param name="rebootRequired">True if a reboot is required to complete the uninstall action, false otherwise.</param>
         /// <returns>True on success, false otherwise.</returns>
         public static bool RemoveDeviceInstance(Guid classGuid, string instanceId, out bool rebootRequired)
         {
             var deviceInfoSet = IntPtr.Zero;
-            var installParams = Marshal.AllocHGlobal(584);
+            var installParams = Marshal.AllocHGlobal(584); // Max struct size on x64 platform
 
             try
             {
-                var deviceInterfaceData = new SP_DEVINFO_DATA();
+                var deviceInfoData = new SP_DEVINFO_DATA();
+                deviceInfoData.cbSize = Marshal.SizeOf(deviceInfoData);
 
-
-                deviceInterfaceData.cbSize = Marshal.SizeOf(deviceInterfaceData);
                 deviceInfoSet = SetupDiGetClassDevs(
                     ref classGuid,
                     IntPtr.Zero,
@@ -144,10 +144,10 @@ namespace ViGEm.Setup.CustomAction.Util
                     instanceId,
                     IntPtr.Zero,
                     0,
-                    ref deviceInterfaceData
+                    ref deviceInfoData
                 ))
                 {
-                    var props = new SP_REMOVEDEVICE_PARAMS { ClassInstallHeader = new SP_CLASSINSTALL_HEADER() };
+                    var props = new SP_REMOVEDEVICE_PARAMS {ClassInstallHeader = new SP_CLASSINSTALL_HEADER()};
 
                     props.ClassInstallHeader.cbSize = Marshal.SizeOf(props.ClassInstallHeader);
                     props.ClassInstallHeader.InstallFunction = DIF_REMOVE;
@@ -155,28 +155,34 @@ namespace ViGEm.Setup.CustomAction.Util
                     props.Scope = DI_REMOVEDEVICE_GLOBAL;
                     props.HwProfile = 0x00;
 
+                    // Prepare class (un-)installer
                     if (SetupDiSetClassInstallParams(
                         deviceInfoSet,
-                        ref deviceInterfaceData,
+                        ref deviceInfoData,
                         ref props,
                         Marshal.SizeOf(props)
                     ))
                     {
-                        if (!SetupDiCallClassInstaller(DIF_REMOVE, deviceInfoSet, ref deviceInterfaceData))
+                        // Invoke class installer with uninstall action
+                        if (!SetupDiCallClassInstaller(DIF_REMOVE, deviceInfoSet, ref deviceInfoData))
                             throw new Win32Exception(Marshal.GetLastWin32Error());
 
+                        // Fill cbSize field
                         Marshal.WriteInt32(
                             installParams,
-                            0,
-                            IntPtr.Size == 4 ? 556 : 584
+                            0, // cbSize is first field, always 32 bits long
+                            IntPtr.Size == 4 ? 556 /* x86 size */ : 584 /* x64 size */
                         );
 
-                        if (!SetupDiGetDeviceInstallParams(deviceInfoSet, ref deviceInterfaceData, installParams))
+                        // Fill SP_DEVINSTALL_PARAMS struct
+                        if (!SetupDiGetDeviceInstallParams(deviceInfoSet, ref deviceInfoData, installParams))
                             throw new Win32Exception(Marshal.GetLastWin32Error());
 
-                        var flags = Marshal.ReadInt32(installParams, Marshal.SizeOf(typeof(UInt32)));
+                        // Grab Flags field of SP_DEVINSTALL_PARAMS (offset of 32 bits)
+                        var flags = Marshal.ReadInt32(installParams, Marshal.SizeOf(typeof(uint)));
 
-                        rebootRequired = (((flags & DI_NEEDRESTART) != 0) || ((flags & DI_NEEDREBOOT) != 0));
+                        // Test for restart/reboot flags being present
+                        rebootRequired = (flags & DI_NEEDRESTART) != 0 || (flags & DI_NEEDREBOOT) != 0;
 
                         return true;
                     }
