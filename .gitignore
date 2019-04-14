@@ -261,3 +261,4 @@ __pycache__/
 *.pyc
 
 Setup/drivers
+Setup/ViGEmBus-*

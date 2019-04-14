@@ -110,8 +110,10 @@
     <ROW Action="AI_DeleteRLzma" Description="Deleting files extracted from archive" DescriptionLocId="ActionText.Description.AI_DeleteLzma" TemplateLocId="-"/>
     <ROW Action="AI_ExtractFiles" Description="Extracting files from archive" DescriptionLocId="ActionText.Description.AI_ExtractLzma" TemplateLocId="-"/>
     <ROW Action="AI_ExtractLzma" Description="Extracting files from archive" DescriptionLocId="ActionText.Description.AI_ExtractLzma" TemplateLocId="-"/>
+    <ROW Action="InstallViGEmBusDevice_x64" Description="Removing existing ViGEmBus instances"/>
+    <ROW Action="InstallViGEmBusDevice_x86" Description="Removing existing ViGEmBus instances"/>
+    <ROW Action="RemoveAllViGEmBusInstances_x64" Description="Removing existing ViGEmBus instances"/>
     <ROW Action="RemoveAllViGEmBusInstances_x86" Description="Removing existing ViGEmBus instances"/>
-    <ROW Action="ViGEm.Setup.CustomAction.CA.dll" Description="Removing existing ViGEmBus instances"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiAppSearchComponent">
     <ROW Property="AI_SETUPEXEPATH" Signature_="AI_EXE_PATH_LM" Builds="DefaultBuild"/>
@@ -153,7 +155,9 @@
     <ROW Action="AI_BACKUP_AI_SETUPEXEPATH" Type="51" Source="AI_SETUPEXEPATH_ORIGINAL" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DATA_SETTER" Type="51" Source="AI_ExtractFiles" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DATA_SETTER_1" Type="51" Source="RemoveAllViGEmBusInstances_x86" Target="UILevel=[UILevel];APPDIR=[APPDIR]"/>
-    <ROW Action="AI_DATA_SETTER_2" Type="51" Source="ViGEm.Setup.CustomAction.CA.dll" Target="UILevel=[UILevel];APPDIR=[APPDIR]"/>
+    <ROW Action="AI_DATA_SETTER_2" Type="51" Source="RemoveAllViGEmBusInstances_x64" Target="UILevel=[UILevel];APPDIR=[APPDIR]"/>
+    <ROW Action="AI_DATA_SETTER_3" Type="51" Source="InstallViGEmBusDevice_x64" Target="UILevel=[UILevel];APPDIR=[APPDIR]"/>
+    <ROW Action="AI_DATA_SETTER_4" Type="51" Source="InstallViGEmBusDevice_x86" Target="UILevel=[UILevel];APPDIR=[APPDIR]"/>
     <ROW Action="AI_DOWNGRADE" Type="19" Target="4010"/>
     <ROW Action="AI_DeleteCadLzma" Type="51" Source="AI_DeleteLzma" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DeleteLzma" Type="1025" Source="lzmaextractor.dll" Target="DeleteLZMAFiles"/>
@@ -174,11 +178,13 @@
     <ROW Action="AI_ResolveKnownFolders" Type="1" Source="aicustact.dll" Target="AI_ResolveKnownFolders"/>
     <ROW Action="AI_SHOW_LOG" Type="65" Source="aicustact.dll" Target="LaunchLogFile" WithoutSeq="true"/>
     <ROW Action="AI_STORE_LOCATION" Type="51" Source="ARPINSTALLLOCATION" Target="[APPDIR]"/>
+    <ROW Action="InstallViGEmBusDevice_x64" Type="3073" Source="ViGEm.Setup.CustomAction.CA.dll_1" Target="InstallViGEmBusDevice" AdditionalSeq="AI_DATA_SETTER_3"/>
+    <ROW Action="InstallViGEmBusDevice_x86" Type="3073" Source="ViGEm.Setup.CustomAction.CA.dll" Target="InstallViGEmBusDevice" AdditionalSeq="AI_DATA_SETTER_4"/>
+    <ROW Action="RemoveAllViGEmBusInstances_x64" Type="3073" Source="ViGEm.Setup.CustomAction.CA.dll_1" Target="RemoveAllViGEmBusInstances" AdditionalSeq="AI_DATA_SETTER_2"/>
     <ROW Action="RemoveAllViGEmBusInstances_x86" Type="3073" Source="ViGEm.Setup.CustomAction.CA.dll" Target="RemoveAllViGEmBusInstances" AdditionalSeq="AI_DATA_SETTER_1"/>
     <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]"/>
     <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]"/>
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
-    <ROW Action="ViGEm.Setup.CustomAction.CA.dll" Type="3073" Source="ViGEm.Setup.CustomAction.CA.dll_1" Target="RemoveAllViGEmBusInstances" AdditionalSeq="AI_DATA_SETTER_2"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstExSeqComponent">
     <ROW Action="AI_DOWNGRADE" Condition="AI_NEWERPRODUCTFOUND AND (UILevel &lt;&gt; 5)" Sequence="210"/>
@@ -200,10 +206,14 @@
     <ROW Action="AI_DATA_SETTER" Sequence="3997"/>
     <ROW Action="AI_EstimateExtractFiles" Sequence="3999" Builds="DefaultBuild"/>
     <ROW Action="AI_DetectSoftware" Sequence="101"/>
-    <ROW Action="RemoveAllViGEmBusInstances_x86" Condition="( ( NOT Installed ) OR ( Installed AND ( REMOVE = &quot;ALL&quot; OR AI_INSTALL_MODE = &quot;Remove&quot; ) ) ) AND ( NOT VersionNT64 )" Sequence="6404"/>
-    <ROW Action="AI_DATA_SETTER_1" Condition="( ( NOT Installed ) OR ( Installed AND ( REMOVE = &quot;ALL&quot; OR AI_INSTALL_MODE = &quot;Remove&quot; ) ) ) AND ( NOT VersionNT64 )" Sequence="6403"/>
-    <ROW Action="ViGEm.Setup.CustomAction.CA.dll" Condition="( ( NOT Installed ) OR ( Installed AND ( REMOVE = &quot;ALL&quot; OR AI_INSTALL_MODE = &quot;Remove&quot; ) ) ) AND ( VersionNT64 )" Sequence="6402"/>
+    <ROW Action="RemoveAllViGEmBusInstances_x86" Condition="( ( NOT Installed ) OR ( Installed AND ( REMOVE = &quot;ALL&quot; OR AI_INSTALL_MODE = &quot;Remove&quot; ) ) ) AND ( NOT VersionNT64 )" Sequence="6406"/>
+    <ROW Action="AI_DATA_SETTER_1" Condition="( ( NOT Installed ) OR ( Installed AND ( REMOVE = &quot;ALL&quot; OR AI_INSTALL_MODE = &quot;Remove&quot; ) ) ) AND ( NOT VersionNT64 )" Sequence="6405"/>
+    <ROW Action="RemoveAllViGEmBusInstances_x64" Condition="( ( NOT Installed ) OR ( Installed AND ( REMOVE = &quot;ALL&quot; OR AI_INSTALL_MODE = &quot;Remove&quot; ) ) ) AND ( VersionNT64 )" Sequence="6402"/>
     <ROW Action="AI_DATA_SETTER_2" Condition="( ( NOT Installed ) OR ( Installed AND ( REMOVE = &quot;ALL&quot; OR AI_INSTALL_MODE = &quot;Remove&quot; ) ) ) AND ( VersionNT64 )" Sequence="6401"/>
+    <ROW Action="InstallViGEmBusDevice_x64" Condition="( NOT Installed ) AND ( VersionNT64 )" Sequence="6404"/>
+    <ROW Action="AI_DATA_SETTER_3" Condition="( NOT Installed ) AND ( VersionNT64 )" Sequence="6403"/>
+    <ROW Action="InstallViGEmBusDevice_x86" Condition="( NOT Installed ) AND ( NOT VersionNT64 )" Sequence="6408"/>
+    <ROW Action="AI_DATA_SETTER_4" Condition="( NOT Installed ) AND ( NOT VersionNT64 )" Sequence="6407"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstallUISequenceComponent">
     <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="749"/>

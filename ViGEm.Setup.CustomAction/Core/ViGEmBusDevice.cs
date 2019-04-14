@@ -8,7 +8,13 @@ namespace ViGEm.Setup.CustomAction.Core
 {
     public class ViGEmBusDevice
     {
+        public static Guid DeviceClassGuid => Guid.Parse("{4D36E97D-E325-11CE-BFC1-08002BE10318}");
+
+        public static string DeviceClassName => "System";
+
         public static Guid InterfaceGuid => Guid.Parse("{96E42B22-F5E9-42F8-B043-ED0F932F014F}");
+
+        public static string HardwareId => "Nefarius\\ViGEmBus\\Gen1\0\0";
 
         public static IEnumerable<ViGEmBusDevice> Devices
         {

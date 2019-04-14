@@ -74,7 +74,25 @@ namespace ViGEm.Setup.CustomAction
         {
             var result = ActionResult.Success;
 
+            session.Log($"OS Major version: {System.Environment.OSVersion.Version.Major}");
 
+            return result;
+
+            try
+            {
+                Devcon.CreateDeviceNode(
+                    ViGEmBusDevice.DeviceClassName,
+                    ViGEmBusDevice.DeviceClassGuid,
+                    ViGEmBusDevice.HardwareId
+                );
+
+                
+            }
+            catch (Win32Exception ex)
+            {
+                session.Log($"Fatal error during installation: {ex}");
+                result = ActionResult.Failure;
+            }
 
             return result;
         }

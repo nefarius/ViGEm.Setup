@@ -36,7 +36,8 @@ namespace ViGEm.Setup.CustomAction.Util
             {
                 deviceInfoSet = SetupDiCreateDeviceInfoList(ref classGuid, IntPtr.Zero);
 
-                if (deviceInfoSet == (IntPtr) (-1)) return false;
+                if (deviceInfoSet == (IntPtr) (-1))
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
 
                 deviceInfoData.cbSize = Marshal.SizeOf(deviceInfoData);
 
@@ -49,7 +50,7 @@ namespace ViGEm.Setup.CustomAction.Util
                     DICD_GENERATE_ID,
                     ref deviceInfoData
                 ))
-                    return false;
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
 
                 if (!SetupDiSetDeviceRegistryProperty(
                     deviceInfoSet,
@@ -58,21 +59,20 @@ namespace ViGEm.Setup.CustomAction.Util
                     node,
                     node.Length * 2
                 ))
-                    return false;
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
 
                 if (!SetupDiCallClassInstaller(
                     DIF_REGISTERDEVICE,
                     deviceInfoSet,
                     ref deviceInfoData
                 ))
-                    return false;
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
             }
             finally
             {
                 if (deviceInfoSet != (IntPtr) (-1))
                     SetupDiDestroyDeviceInfoList(deviceInfoSet);
             }
-
 
             return true;
         }
