@@ -27,7 +27,7 @@ namespace ViGEm.Setup.CustomAction
             {
                 try
                 {
-                    var ret = Devcon.RemoveDeviceInstance(busGuid, instanceId);
+                    var ret = Devcon.RemoveDeviceInstance(busGuid, instanceId, out var rebootRequired);
 
                     session.Message(InstallMessage.User | (InstallMessage) MessageBoxButtons.OK, new Record
                     {

@@ -13,7 +13,7 @@ namespace DebuggingConsoleApp
 
             while (Devcon.FindDeviceByInterfaceId(busGuid, out var path, out var instanceId, index))
             {
-                var ret = Devcon.RemoveDeviceInstance(busGuid, instanceId);
+                var ret = Devcon.RemoveDeviceInstance(busGuid, instanceId, out _);
 
                 index++;
             }
