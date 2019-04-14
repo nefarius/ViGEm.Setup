@@ -3,6 +3,7 @@ using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using ViGEm.Setup.CustomAction.Core;
 using ViGEm.Setup.CustomAction.Util;
 
 namespace ViGEm.Setup.CustomAction
@@ -19,15 +20,13 @@ namespace ViGEm.Setup.CustomAction
                 FormatString = $"{Environment.Is64BitProcess}"
             });
 
-            var busGuid = Guid.Parse("{96E42B22-F5E9-42F8-B043-ED0F932F014F}");
-
             var index = 0;
 
-            while (Devcon.FindDeviceByInterfaceId(busGuid, out var path, out var instanceId, index))
+            while (Devcon.FindDeviceByInterfaceId(ViGEmBusDevice.InterfaceGuid, out var path, out var instanceId, index))
             {
                 try
                 {
-                    var ret = Devcon.RemoveDeviceInstance(busGuid, instanceId, out var rebootRequired);
+                    var ret = Devcon.RemoveDeviceInstance(ViGEmBusDevice.InterfaceGuid, instanceId, out var rebootRequired);
 
                     session.Message(InstallMessage.User | (InstallMessage) MessageBoxButtons.OK, new Record
                     {

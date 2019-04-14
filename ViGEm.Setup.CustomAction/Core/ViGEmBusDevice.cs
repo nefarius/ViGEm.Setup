@@ -8,38 +8,16 @@ namespace ViGEm.Setup.CustomAction.Core
 {
     public class ViGEmBusDevice
     {
-        public static Guid ClassGuid => Guid.Parse("{96E42B22-F5E9-42F8-B043-ED0F932F014F}");
+        public static Guid InterfaceGuid => Guid.Parse("{96E42B22-F5E9-42F8-B043-ED0F932F014F}");
 
         public static IEnumerable<ViGEmBusDevice> Devices
         {
             get
             {
-                var list = new List<ViGEmBusDevice>();
                 var instance = 0;
 
-                while (Devcon.FindDeviceByInterfaceId(ClassGuid, out var path, out var instanceId, instance++))
-                    using (var objSearcher =
-                        new ManagementObjectSearcher(
-                            $"Select * from Win32_PnPSignedDriver Where DeviceID = '{instanceId.Replace("\\", "\\\\")}'")
-                    )
-                    {
-                        using (var objCollection = objSearcher.Get())
-                        {
-                            var device = objCollection.Cast<ManagementObject>().First();
-
-                            list.Add(new ViGEmBusDevice
-                            {
-                                DevicePath = path,
-                                InstanceId = instanceId,
-                                DeviceName = device["DeviceName"].ToString(),
-                                DriverVersion = Version.Parse(device["DriverVersion"].ToString()),
-                                Manufacturer = device["Manufacturer"].ToString(),
-                                DriverProviderName = device["DriverProviderName"].ToString()
-                            });
-                        }
-                    }
-
-                return list;
+                while (Devcon.FindDeviceByInterfaceId(InterfaceGuid, out var path, out var instanceId, instance++))
+                    yield return GetDeviceDetails(instanceId, path);
             }
         }
 
@@ -54,6 +32,30 @@ namespace ViGEm.Setup.CustomAction.Core
         public string Manufacturer { get; private set; }
 
         public string DriverProviderName { get; private set; }
+
+        public static ViGEmBusDevice GetDeviceDetails(string instanceId, string path)
+        {
+            using (var objSearcher =
+                new ManagementObjectSearcher(
+                    $"Select * from Win32_PnPSignedDriver Where DeviceID = '{instanceId.Replace("\\", "\\\\")}'")
+            )
+            {
+                using (var objCollection = objSearcher.Get())
+                {
+                    var device = objCollection.Cast<ManagementObject>().First();
+
+                    return new ViGEmBusDevice
+                    {
+                        DevicePath = path,
+                        InstanceId = instanceId,
+                        DeviceName = device["DeviceName"].ToString(),
+                        DriverVersion = Version.Parse(device["DriverVersion"].ToString()),
+                        Manufacturer = device["Manufacturer"].ToString(),
+                        DriverProviderName = device["DriverProviderName"].ToString()
+                    };
+                }
+            }
+        }
 
         #region Equality
 
