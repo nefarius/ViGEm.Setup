@@ -1,5 +1,8 @@
 using Microsoft.Deployment.WindowsInstaller;
+using System;
 using System.ComponentModel;
+using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using ViGEm.Setup.CustomAction.Core;
 using ViGEm.Setup.CustomAction.Util;
@@ -11,11 +14,10 @@ namespace ViGEm.Setup.CustomAction
         [CustomAction]
         public static ActionResult RemoveAllViGEmBusInstances(Session session)
         {
+            session.Log("Begin RemoveAllViGEmBusInstances");
+
             var result = ActionResult.Success;
             var isSilent = session.CustomActionData["UILevel"] == "2";
-            //var appDir = session.CustomActionData["APPDIR"];
-
-            session.Log("Begin RemoveAllViGEmBusInstances");
 
             // Loop through all instances (if any)
             while (Devcon.FindDeviceByInterfaceId(ViGEmBusDevice.InterfaceGuid, out var path, out var instanceId))
@@ -72,11 +74,16 @@ namespace ViGEm.Setup.CustomAction
         [CustomAction]
         public static ActionResult InstallViGEmBusDevice(Session session)
         {
+            session.Log("Begin InstallViGEmBusDevice");
+
             var result = ActionResult.Success;
+            var appDir = session.CustomActionData["APPDIR"];
+            var fullInfPath = Path.Combine(
+                appDir,
+                $@"drivers\Win{(Environment.OSVersion.Version.Major == 10 ? "10" : "6")}",
+                "ViGEmBus.inf");
 
-            session.Log($"OS Major version: {System.Environment.OSVersion.Version.Major}");
-
-            return result;
+            session.Log($"Attempting to install driver {fullInfPath}");
 
             try
             {
@@ -86,13 +93,26 @@ namespace ViGEm.Setup.CustomAction
                     ViGEmBusDevice.HardwareId
                 );
 
-                
+                var ret = Devcon.UpdateDeviceDriver(
+                    ViGEmBusDevice.HardwareId,
+                    fullInfPath,
+                    out var rebootRequired
+                );
+
+                if (!ret)
+                {
+                    session.Log(
+                        $"Devcon.UpdateDeviceDriver failed: {new Win32Exception(Marshal.GetLastWin32Error())}");
+                    result = ActionResult.Failure;
+                }
             }
             catch (Win32Exception ex)
             {
-                session.Log($"Fatal error during installation: {ex}");
+                session.Log($"Devcon.CreateDeviceNode failed: {ex}");
                 result = ActionResult.Failure;
             }
+
+            session.Log("End InstallViGEmBusDevice");
 
             return result;
         }
