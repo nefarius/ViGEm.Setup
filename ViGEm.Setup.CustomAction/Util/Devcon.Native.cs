@@ -7,6 +7,9 @@ namespace ViGEm.Setup.CustomAction.Util
     {
         #region Constant and Structure Definitions
 
+        private const int MAX_DEVICE_ID_LEN = 200;
+        private const int MAX_PATH = 260;
+
         private const int DIGCF_PRESENT = 0x0002;
         private const int DIGCF_DEVICEINTERFACE = 0x0010;
 
@@ -17,6 +20,9 @@ namespace ViGEm.Setup.CustomAction.Util
         private const int DIF_REGISTERDEVICE = 0x0019;
 
         private const int DI_REMOVEDEVICE_GLOBAL = 0x0001;
+
+        private const int DI_NEEDRESTART = 0x00000080;
+        private const int DI_NEEDREBOOT = 0x00000100;
 
         [StructLayout(LayoutKind.Sequential)]
         private struct SP_DEVINFO_DATA
@@ -36,20 +42,24 @@ namespace ViGEm.Setup.CustomAction.Util
             private readonly UIntPtr reserved;
         }
 
-        [StructLayout(LayoutKind.Sequential)]
-        private struct SP_DEVINSTALL_PARAMS
+#if WIN32
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+#elif WIN64
+        [StructLayout(LayoutKind.Sequential, Pack = 8)]
+#endif
+        public struct SP_DEVINSTALL_PARAMS
         {
-            internal Int32 cbSize;
-            internal Int32 Flags;
-            internal Int32 FlagsEx;
-            internal IntPtr hwndParent;
-            internal IntPtr InstallMsgHandler;
-            internal IntPtr InstallMsgHandlerContext;
-            internal IntPtr FileQueue;
-            internal IntPtr ClassInstallReserved;
-            internal int Reserved;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
-            internal string DriverPath;
+            public UInt32 cbSize;
+            public UInt32 Flags;
+            public UInt32 FlagsEx;
+            public IntPtr hwndParent;
+            public IntPtr InstallMsgHandler;
+            public IntPtr InstallMsgHandlerContext;
+            public IntPtr FileQueue;
+            public IntPtr ClassInstallReserved;
+            public UIntPtr Reserved;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_PATH)]
+            public string DriverPath;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -161,8 +171,12 @@ namespace ViGEm.Setup.CustomAction.Util
         [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
         private static extern uint CM_Reenumerate_DevNode_Ex(uint dnDevInst, uint ulFlags, IntPtr hMachine);
 
-        [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        private static extern bool SetupDiGetDeviceInstallParams(IntPtr hDevInfo, ref SP_DEVINFO_DATA DeviceInfoData, ref SP_DEVINSTALL_PARAMS DeviceInstallParams);
+        [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern bool SetupDiGetDeviceInstallParams(
+            IntPtr hDevInfo,
+            ref SP_DEVINFO_DATA DeviceInfoData,
+            IntPtr DeviceInstallParams
+        );
 
         [DllImport("newdev.dll", SetLastError = true)]
         private static extern bool DiInstallDevice(

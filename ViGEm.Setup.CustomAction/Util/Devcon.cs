@@ -29,14 +29,14 @@ namespace ViGEm.Setup.CustomAction.Util
         /// <returns>True on success, false otherwise.</returns>
         public static bool CreateDeviceNode(string className, Guid classGuid, string node)
         {
-            var deviceInfoSet = (IntPtr) (-1);
+            var deviceInfoSet = (IntPtr)(-1);
             var deviceInfoData = new SP_DEVINFO_DATA();
 
             try
             {
                 deviceInfoSet = SetupDiCreateDeviceInfoList(ref classGuid, IntPtr.Zero);
 
-                if (deviceInfoSet == (IntPtr) (-1)) return false;
+                if (deviceInfoSet == (IntPtr)(-1)) return false;
 
                 deviceInfoData.cbSize = Marshal.SizeOf(deviceInfoData);
 
@@ -69,7 +69,7 @@ namespace ViGEm.Setup.CustomAction.Util
             }
             finally
             {
-                if (deviceInfoSet != (IntPtr) (-1))
+                if (deviceInfoSet != (IntPtr)(-1))
                     SetupDiDestroyDeviceInfoList(deviceInfoSet);
             }
 
@@ -121,13 +121,15 @@ namespace ViGEm.Setup.CustomAction.Util
         /// <param name="classGuid">The device class GUID.</param>
         /// <param name="instanceId">The instance ID.</param>
         /// <returns>True on success, false otherwise.</returns>
-        public static bool RemoveDeviceInstance(Guid classGuid, string instanceId)
+        public static bool RemoveDeviceInstance(Guid classGuid, string instanceId, out bool rebootRequired)
         {
             var deviceInfoSet = IntPtr.Zero;
+            var installParams = Marshal.AllocHGlobal(584);
 
             try
             {
                 var deviceInterfaceData = new SP_DEVINFO_DATA();
+
 
                 deviceInterfaceData.cbSize = Marshal.SizeOf(deviceInterfaceData);
                 deviceInfoSet = SetupDiGetClassDevs(
@@ -145,7 +147,7 @@ namespace ViGEm.Setup.CustomAction.Util
                     ref deviceInterfaceData
                 ))
                 {
-                    var props = new SP_REMOVEDEVICE_PARAMS {ClassInstallHeader = new SP_CLASSINSTALL_HEADER()};
+                    var props = new SP_REMOVEDEVICE_PARAMS { ClassInstallHeader = new SP_CLASSINSTALL_HEADER() };
 
                     props.ClassInstallHeader.cbSize = Marshal.SizeOf(props.ClassInstallHeader);
                     props.ClassInstallHeader.InstallFunction = DIF_REMOVE;
@@ -163,6 +165,19 @@ namespace ViGEm.Setup.CustomAction.Util
                         if (!SetupDiCallClassInstaller(DIF_REMOVE, deviceInfoSet, ref deviceInterfaceData))
                             throw new Win32Exception(Marshal.GetLastWin32Error());
 
+                        Marshal.WriteInt32(
+                            installParams,
+                            0,
+                            IntPtr.Size == 4 ? 556 : 584
+                        );
+
+                        if (!SetupDiGetDeviceInstallParams(deviceInfoSet, ref deviceInterfaceData, installParams))
+                            throw new Win32Exception(Marshal.GetLastWin32Error());
+
+                        var flags = Marshal.ReadInt32(installParams, Marshal.SizeOf(typeof(UInt32)));
+
+                        rebootRequired = (((flags & DI_NEEDRESTART) != 0) || ((flags & DI_NEEDREBOOT) != 0));
+
                         return true;
                     }
                 }
@@ -171,8 +186,10 @@ namespace ViGEm.Setup.CustomAction.Util
             {
                 if (deviceInfoSet != IntPtr.Zero)
                     SetupDiDestroyDeviceInfoList(deviceInfoSet);
+                Marshal.FreeHGlobal(installParams);
             }
 
+            rebootRequired = false;
             return false;
         }
 
