@@ -68,5 +68,15 @@ namespace ViGEm.Setup.CustomAction
 
             return result;
         }
+
+        [CustomAction]
+        public static ActionResult InstallViGEmBusDevice(Session session)
+        {
+            var result = ActionResult.Success;
+
+
+
+            return result;
+        }
     }
 }
