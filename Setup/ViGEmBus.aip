@@ -185,7 +185,7 @@
     <ROW Action="InstallViGEmBusDevice_x86" Type="3073" Source="ViGEm.Setup.CustomAction.CA.dll" Target="InstallViGEmBusDevice" AdditionalSeq="AI_DATA_SETTER_4"/>
     <ROW Action="RemoveAllViGEmBusInstances_x64" Type="3073" Source="ViGEm.Setup.CustomAction.CA.dll_1" Target="RemoveAllViGEmBusInstances" AdditionalSeq="AI_DATA_SETTER_2"/>
     <ROW Action="RemoveAllViGEmBusInstances_x86" Type="3073" Source="ViGEm.Setup.CustomAction.CA.dll" Target="RemoveAllViGEmBusInstances" AdditionalSeq="AI_DATA_SETTER_1"/>
-    <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]"/>
+    <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[ProgramFilesFolder]Nefarius Software Solutions\[ProductName]"/>
     <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]"/>
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
   </COMPONENT>
