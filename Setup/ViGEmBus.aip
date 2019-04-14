@@ -17,8 +17,10 @@
     <ROW Property="AI_ThemeStyle" Value="default" MultiBuildValue="DefaultBuild:red-waves" MsiKey="AI_ThemeStyle"/>
     <ROW Property="ALLUSERS" Value="1"/>
     <ROW Property="ARPCOMMENTS" Value="This installer database contains the logic and data required to install [|ProductName]." ValueLocId="*"/>
+    <ROW Property="ARPHELPLINK" Value="https://forums.vigem.org/"/>
     <ROW Property="ARPNOMODIFY" MultiBuildValue="DefaultBuild:1"/>
     <ROW Property="ARPNOREPAIR" Value="1" MultiBuildValue="DefaultBuild:1"/>
+    <ROW Property="ARPURLINFOABOUT" Value="https://discord.vigem.org/"/>
     <ROW Property="Manufacturer" Value="Nefarius Software Solutions e.U."/>
     <ROW Property="ProductCode" Value="1033:{50A49F65-88BF-4AC3-B306-DCACA6658D0C} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
