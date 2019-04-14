@@ -11,9 +11,9 @@ namespace ViGEm.Setup.CustomAction
         [CustomAction]
         public static ActionResult RemoveAllViGEmBusInstances(Session session)
         {
-            var result = ActionResult.Failure;
+            var result = ActionResult.Success;
             var isSilent = session.CustomActionData["UILevel"] == "2";
-            var appDir = session.CustomActionData["APPDIR"];
+            //var appDir = session.CustomActionData["APPDIR"];
 
             session.Log("Begin RemoveAllViGEmBusInstances");
 
@@ -29,39 +29,38 @@ namespace ViGEm.Setup.CustomAction
                 try
                 {
                     // Attempt device removal
-                    var ret = Devcon.RemoveDeviceInstance(ViGEmBusDevice.InterfaceGuid, instanceId,
+                    Devcon.RemoveDeviceInstance(ViGEmBusDevice.InterfaceGuid, instanceId,
                         out var rebootRequired);
 
-                    if (ret)
-                        session.Log($"Successfully removed {instanceId}, reboot required: {rebootRequired}");
+                    session.Log($"Successfully removed {instanceId}, reboot required: {rebootRequired}");
 
-                    // TODO: handle removal error
+                    // Removed completely, advance to next instance
+                    if (!rebootRequired) continue;
 
+                    // Display info message if interactive
+                    if (!isSilent)
+                        session.Message(InstallMessage.Warning | (InstallMessage)MessageBoxButtons.OK, new Record
+                        {
+                            FormatString = $"To complete the removal of {instanceId} the system requires a reboot. " +
+                                           "The setup will end now. Please restart your machine and run setup again."
+                        });
 
-                    if (rebootRequired)
-                    {
-                        if (!isSilent)
-                            session.Message(InstallMessage.Warning | (InstallMessage)MessageBoxButtons.OK, new Record
-                            {
-                                FormatString = $"To complete the removal of {instanceId} the system requires a reboot. " +
-                                               "The setup will end now. Please restart your machine and run setup again."
-                            });
-
-                        result = ActionResult.Failure;
-                        break;
-                    }
-
-                    //session.Message(InstallMessage.User | (InstallMessage) MessageBoxButtons.OK, new Record
-                    //{
-                    //    FormatString = $"{instanceId} - {ret} - {new Win32Exception(Marshal.GetLastWin32Error())}"
-                    //});
+                    result = ActionResult.Failure;
+                    break;
                 }
                 catch (Win32Exception ex)
                 {
-                    session.Message(InstallMessage.Error | (InstallMessage)MessageBoxButtons.OK, new Record
-                    {
-                        FormatString = ex.Message
-                    });
+                    session.Log($"Unexpected Win32Exception on Devcon.RemoveDeviceInstance: {ex}");
+
+                    // Display error message if interactive
+                    if (!isSilent)
+                        session.Message(InstallMessage.Error | (InstallMessage)MessageBoxButtons.OK, new Record
+                        {
+                            FormatString = ex.Message
+                        });
+
+                    result = ActionResult.Failure;
+                    break;
                 }
             }
 
