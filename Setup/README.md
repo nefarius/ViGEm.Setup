@@ -1,4 +1,4 @@
-# Advanced Installer (Professional) Setup files
+# Advanced Installer (Enterprise) Setup files
 
 ## About
 
