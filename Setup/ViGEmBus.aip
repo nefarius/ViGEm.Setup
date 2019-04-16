@@ -11,7 +11,7 @@
     <ROW Property="AI_REQUIRED_DOTNET_VERSION" MultiBuildValue="DefaultBuild:4.5" ValueLocId="-"/>
     <ROW Property="AI_RUN_AS_ADMIN" Value="0"/>
     <ROW Property="ALLUSERS" Value="1"/>
-    <ROW Property="ARPCOMMENTS" Value="This installer database contains the logic and data required to install [|ProductName]." ValueLocId="*"/>
+    <ROW Property="ARPCOMMENTS" Value="Official Virtual Gamepad Emulation Framework Bus Driver" ValueLocId="*"/>
     <ROW Property="ARPHELPLINK" Value="https://forums.vigem.org/"/>
     <ROW Property="ARPNOMODIFY" MultiBuildValue="DefaultBuild:1"/>
     <ROW Property="ARPNOREPAIR" Value="1" MultiBuildValue="DefaultBuild:1"/>
