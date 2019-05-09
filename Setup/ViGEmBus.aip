@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DOCUMENT Type="Advanced Installer" CreateVersion="15.8" version="15.8" PreviousModules="professional" Modules="enterprise" RootPath="." Language="en" Id="{B752A85C-BB1A-4C21-A7FE-83808FB22981}">
+<DOCUMENT Type="Advanced Installer" CreateVersion="15.8" version="15.9" PreviousModules="professional" Modules="enterprise" RootPath="." Language="en" Id="{B752A85C-BB1A-4C21-A7FE-83808FB22981}">
   <COMPONENT cid="caphyon.advinst.msicomp.ProjectOptionsComponent">
     <ROW Name="HiddenItems" Value="AppXProductDetailsComponent;AppXDependenciesComponent;AppXAppDetailsComponent;AppXVisualAssetsComponent;AppXCapabilitiesComponent;AppXAppDeclarationsComponent;AppXUriRulesComponent;ActSyncAppComponent;FixupComponent"/>
   </COMPONENT>
@@ -154,6 +154,10 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiConditionComponent">
     <ROW Feature_="AI64BitFiles" Level="0" Condition="NOT VersionNT64"/>
     <ROW Feature_="AI32BitFiles" Level="0" Condition="VersionNT64"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiControlComponent">
+    <ROW Dialog_="MaintenanceTypeDlg" Control="ChangeButton" Type="PushButton" X="50" Y="65" Width="38" Height="38" Attributes="5767169" Text="[CustomSetupIcon]" Help="Modify Installation|" Order="200" HelpLocId="Control.Help.MaintenanceTypeDlg#ChangeButton" MsiKey="MaintenanceTypeDlg#ChangeButton"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="RepairButton" Type="PushButton" X="50" Y="114" Width="38" Height="38" Attributes="5767171" Text="[RepairIcon]" Help="Repair Installation|" Order="400" HelpLocId="Control.Help.MaintenanceTypeDlg#RepairButton" MsiKey="MaintenanceTypeDlg#RepairButton"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlEventComponent">
     <ROW Dialog_="WelcomeDlg" Control_="Next" Event="NewDialog" Argument="VerifyReadyDlg" Condition="AI_INSTALL" Ordering="1"/>
