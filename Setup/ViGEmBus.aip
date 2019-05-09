@@ -18,10 +18,10 @@
     <ROW Property="ARPPRODUCTICON" Value="ViGEm.exe" Type="8"/>
     <ROW Property="ARPURLINFOABOUT" Value="https://discord.vigem.org/"/>
     <ROW Property="Manufacturer" Value="Nefarius Software Solutions e.U."/>
-    <ROW Property="ProductCode" Value="1033:{50A49F65-88BF-4AC3-B306-DCACA6658D0C} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{992C5289-BAE9-4587-A13E-766A582984F3} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="ViGEm Bus Driver"/>
-    <ROW Property="ProductVersion" Value="1.16.112" Type="32"/>
+    <ROW Property="ProductVersion" Value="1.16.113" Type="32"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND;AI_SETUPEXEPATH;SETUPEXEDIR"/>
     <ROW Property="UpgradeCode" Value="{0A4A02DE-0BE3-4BF4-91F0-1EA47AD26881}"/>
     <ROW Property="WindowsType9X" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
