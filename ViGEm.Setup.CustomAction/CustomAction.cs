@@ -22,11 +22,19 @@ namespace ViGEm.Setup.CustomAction
             // Loop through all instances (if any)
             while (Devcon.FindDeviceByInterfaceId(ViGEmBusDevice.InterfaceGuid, out var path, out var instanceId))
             {
-                // Grab device details via WMI
-                var details = ViGEmBusDevice.GetDeviceDetails(instanceId, path);
+                try
+                {
+                    // Grab device details via WMI
+                    var details = ViGEmBusDevice.GetDeviceDetails(instanceId, path);
 
-                session.Log($"Found ViGEmBus device: {instanceId} ({path}), " +
-                            $"Manufacturer: {details.Manufacturer}, Version: {details.DriverVersion}");
+                    session.Log($"Found ViGEmBus device: {instanceId} ({path}), " +
+                                $"Manufacturer: {details.Manufacturer}, Version: {details.DriverVersion}");
+                }
+                catch (Exception ex)
+                {
+                    session.Log($"Warning: failed to grab device details via WMI ({ex.Message})");
+                    session.Log($"> Stack Trace: {ex.StackTrace}");
+                }
 
                 try
                 {
