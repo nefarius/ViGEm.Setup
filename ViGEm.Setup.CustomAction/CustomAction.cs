@@ -2,6 +2,7 @@ using Microsoft.Deployment.WindowsInstaller;
 using System;
 using System.ComponentModel;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using ViGEm.Setup.CustomAction.Core;
@@ -14,7 +15,7 @@ namespace ViGEm.Setup.CustomAction
         [CustomAction]
         public static ActionResult RemoveAllViGEmBusInstances(Session session)
         {
-            session.Log("Begin RemoveAllViGEmBusInstances");
+            session.Log($"Begin RemoveAllViGEmBusInstances ({Assembly.GetExecutingAssembly().GetName().Version})");
 
             var result = ActionResult.Success;
             var isSilent = session.CustomActionData["UILevel"] == "2";
@@ -82,7 +83,7 @@ namespace ViGEm.Setup.CustomAction
         [CustomAction]
         public static ActionResult InstallViGEmBusDevice(Session session)
         {
-            session.Log("Begin InstallViGEmBusDevice");
+            session.Log($"Begin InstallViGEmBusDevice ({Assembly.GetExecutingAssembly().GetName().Version})");
 
             var result = ActionResult.Success;
             var appDir = session.CustomActionData["APPDIR"];
