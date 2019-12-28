@@ -16,6 +16,10 @@ Enumerates all existing ViGEmBus devices (if any) identified by interface GUID a
 
 Creates a virtual device node ("fake" Hardware ID) for the driver to attach to. Then invokes driver installation onto created device node. The method distinguishes between Kernel Major Version 6 (Windows 7 to 8.1) and 10 (Windows 10) and automatically chooses the compatible `INF` file. This is required because the WHQL process will spit out different files for different OS versions which has to be taken into account during installation.
 
+## Dependencies
+
+- Requires [WiX Toolset 3.1 or newer](https://wixtoolset.org/releases/) to build
+
 ## Sources
 
 - [How to create fully fledged C# custom actions](https://www.advancedinstaller.com/user-guide/qa-c-sharp-ca.html)
