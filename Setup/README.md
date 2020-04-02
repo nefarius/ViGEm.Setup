@@ -4,6 +4,8 @@ Resources used by the [Advanced Installer](https://advancedinstaller.com) projec
 
 ## About
 
+The main driver (un)installation logic is abstracted away by the [Custom Actions project](../ViGEm.Setup.CustomAction) and called like described below. 
+
 ### Custom Actions
 
 ![](https://forums.vigem.org/assets/uploads/advinst_byizuziyib.png)
